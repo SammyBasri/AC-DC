@@ -166,6 +166,14 @@ Active Directory Persistence
                     - psexec.exe \\192.168.1.110 cmd.exe
                          - this would fail
                          - always use hostname with this attack.
+           Alternative: After compromising the DC
+          - Domain Controller Sync
+          - You need to compromise a local admin account
+          - log in to the Windows 10 client as jeff_admin 
+          - Start mimikatz
+               - lsadump::dcsync /user:Administrator
+               - you can change the user name
+               
       
    
   
