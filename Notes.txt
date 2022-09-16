@@ -1,0 +1,50 @@
+Simple Enumeration Approach
+               - enumerate all local accounts 
+                    - net user
+               - enumerate all users in the entire domain
+                    - net user /domain
+               - query a specific user
+                    - net user jeff_admin /domain
+               - enumerate all groups in the domain
+                    - net group /domain
+             
+Enumeration using Scripts (needed for Nested Groups):
+
+
+------------------------------------------------------------------------------------------------
+
+
+   $domainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+
+   $PDC = ($domainObj.PdcRoleOwner).Name
+
+   $SearchString = "LDAP://"
+
+   $SearchString += $PDC + "/"
+
+   $DistinguishedName = "DC=$($domainObj.Name.Replace('.', ',DC='))"
+
+   $SearchString += $DistinguishedName
+
+   $Searcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
+
+   $objDomain = New-Object System.DirectoryServices.DirectoryEntry
+
+   $Searcher.SearchRoot = $objDomain
+
+  $Searcher.filter="(objectClass=Group)"
+    <# - You can edit the above line to list memebers of a specific group:
+          - $Searcher.filter="memberof=CN=<group name>,CN=Users,DC=corp,DC=com"
+          - Example: $Search-er.filter="objectcategory=CN=Computer,CN=Schema,CN=Configuration,DC=corp,DC=com"
+    #>
+   $Result = $Searcher.FindAll()
+       
+   Foreach($obj in $Result)
+   {
+       Foreach($prop in $obj.Properties)
+       {
+           $prop
+       }
+
+       Write-Host "------------------------"
+   }
