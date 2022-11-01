@@ -193,6 +193,7 @@ Foothold:
     - cme ssh <IP> -u user.txt -p 'passowrd'
     - Note: try on all three machines and try to hit all services that take login creds. 
     - Very likely you get a valid cred set and you can use it to ssh or rdp into the first machine
+    - You can also try Hydra
 
 - If you have mssql creds: https://rioasmara.com/2020/01/31/mssql-rce-and-reverse-shell-xp_cmdshell-with-nishang/
   - Attacker:
