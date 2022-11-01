@@ -291,6 +291,7 @@ apachesvc@MSSQLSvc~sql01.example.com~1433-example.COM.kirbi
   
 Port forwarding: 
   - Chisel: https://www.youtube.com/watch?v=ghZ8XK9zEfI
+    - https://medium.com/geekculture/chisel-network-tunneling-on-steroids-a28e6273c683
     - On victim: echo %PROCESSOR_ARCHITECTURE%
     - Download proper chisel for both linux and windows. They have to be the same: https://github.com/jpillora/chisel/releases/tag/v1.7.7
     - On attacker: chisel server --reverse -p 2222
